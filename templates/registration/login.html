@@ -6,6 +6,11 @@
 <div class="login-form-container">
     <form method="POST">
         {% csrf_token %}
+
+        <!-- the 'form' class below is retrieved from the context passed via
+            django_registration.backends.one_step.urls in urls.py, using the 
+            default django_registration.forms.RegistrationForm-->
+
         {{ form|crispy }}
         <button type="submit" class="btn btn-sm btn-outline-primary">Login</button>
     </form>
