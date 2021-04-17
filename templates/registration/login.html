@@ -1,8 +1,9 @@
 {% extends 'auth_layout.html' %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-<h1>Login</h1>
+{% block auth %}
+<h1>QuestionTime</h1>
+<p class="lead text-muted">Share your Knowledge!</p>
 <div class="login-form-container">
     <form method="POST">
         {% csrf_token %}
@@ -12,7 +13,7 @@
             default django_registration.forms.RegistrationForm-->
 
         {{ form|crispy }}
-        <button type="submit" class="btn btn-sm btn-outline-primary">Login</button>
+        <button type="submit" class="btn btn-sm btn-outline-primary mt-4">Login</button>
     </form>
 </div>
 
