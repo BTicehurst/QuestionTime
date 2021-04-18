@@ -1,20 +1,53 @@
 <template>
   <div class="home">
-    <div class='container'>
-      <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-      <HelloWorld msg="Welcome to Your Vue.js App!!" />
+    <div class='container mt-5'>
+      <div v-for="question in questions"
+            :key="question.pk">
+        <p class="mb-0">Posted By:
+          <span class="author-name">{{ question.author }}</span>
+        </p>
+        <h2>{{ question.content }}</h2>
+        <p>Answers: {{ question.answers_count }}</p>
+        <hr>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import { apiService } from "../common/api.service"
 
 export default {
   name: "Home",
-  components: {
-    HelloWorld,
+  data() {
+    return {
+      questions: []
+    }
   },
+  methods: {
+    getQuestions() {
+      let endpoint = "api/questions/";
+      apiService(endpoint)
+        .then(data => {
+
+          // Use the below line 'objects.assign......' if not using pagination,
+          // otherwise the http response data will not have a 'results' attr
+          //
+          // Object.assign(this.questions, data);
+          this.questions.push(...data.results)
+        })
+    }
+  },
+  created() {
+    this.getQuestions()
+  }
 };
 </script>
+
+<style>
+.author-name {
+  font-weight: bold;
+  color: red;
+}
+
+</style>
