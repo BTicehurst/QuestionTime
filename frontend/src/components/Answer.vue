@@ -14,7 +14,7 @@ import { defineComponent } from '@vue/composition-api'
 export default defineComponent({
     name: "AnswerComponent",
 
-    // objects/data the component expects to receive to function
+    // props this component expects to be passed to it when created
     props: {
         answer: {
             type: Object,

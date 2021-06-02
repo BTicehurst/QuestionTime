@@ -11,6 +11,8 @@
             :to="{ name: 'question', params: { slug: question.slug }}"
             class="question-link"
           >
+            <!-- if a question is longer than 'preview_length', replace
+            excess characters with '...' -->
             <h2 v-if="question.content.length > preview_length">
               {{ question.content.slice(0,preview_length) + "..." }}
             </h2>
@@ -23,7 +25,11 @@
         <hr>
       </div>
       <div class="my-4">
+        <!-- loadingQuestions set to true while waiting for a promise response
+        from 'getQuestions', during this time '...loading...' will display.-->
         <p v-show="loadingQuestions">...loading...</p>
+        <!-- only show this button if 'next' is not null, indicating there are
+        more django pages containing further questions that may be retrieved-->
         <button
           v-show="next"
           @click="getQuestions"
