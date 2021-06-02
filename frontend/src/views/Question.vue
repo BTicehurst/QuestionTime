@@ -58,7 +58,20 @@
                 v-for="(answer, index) in answers"
                 :answer="answer"
                 :key="index"
-            />
+            />        
+            <div class="my-4">
+                <!-- loadingAnswers set to true while waiting for a promise response
+                from 'getQuestionAnswers', during this time '...loading...' will display.-->
+                <p v-show="loadingAnswers">...loading...</p>
+                <!-- only show this button if 'next' is not null, indicating there are
+                more django pages containing further answers that may be retrieved-->
+                <button
+                v-show="next"
+                @click="getQuestionAnswers"
+                class="btn btn-sm btn-outline-success"
+                >Load More
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -88,7 +101,9 @@ export default {
             newAnswerBody: null,
             error: null,
             userHasAnswered: false,
-            showForm: false
+            showForm: false,
+            next: null,
+            loadingAnswers: false,
         }
     },
 
@@ -110,12 +125,22 @@ export default {
         },
         getQuestionAnswers() {
             let endpoint = `/api/questions/${this.slug}/answers/`;
+            if (this.next) {
+                endpoint = this.next;
+            }
+            this.loadingAnswers = true;
             // run apiService promise directed at 'endpoint'. Default method is GET
             apiService(endpoint)
                 // response data is used as parameter in arrow function to grab
                 // answers data
                 .then(data => {
-                    this.answers = data.results;
+                    this.answers.push(...data.results);
+                    this.loadingAnswers = false;
+                    if (data.next) {
+                        this.next = data.next;
+                    } else {
+                        this.next = null;
+                    }
                 })
         },
         onSubmit() {
