@@ -1,5 +1,7 @@
 <template>
     <div id="app">
+        <!-- load the navbar component, and then whatever component router-view
+        is currently pointing to -->
         <NavbarComponent />
         <router-view />
     </div>
@@ -7,7 +9,7 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
-import NavbarComponent from "./components/Navbar.vue"
+import NavbarComponent from "@/components/Navbar.vue"
 
 export default defineComponent({
   name: "App",

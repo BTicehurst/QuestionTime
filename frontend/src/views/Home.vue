@@ -10,7 +10,13 @@
           <router-link
             :to="{ name: 'question', params: { slug: question.slug }}"
             class="question-link"
-          >{{ question.content }}
+          >
+            <h2 v-if="question.content.length > preview_length">
+              {{ question.content.slice(0,preview_length) + "..." }}
+            </h2>
+            <h2 v-else>
+              {{ question.content.slice(0,preview_length) }}
+            </h2>
           </router-link>
         </h2>
         <p>Answers: {{ question.answers_count }}</p>
@@ -30,7 +36,7 @@
 </template>
 
 <script>
-import { apiService } from "../common/api.service.js"
+import { apiService } from "@/common/api.service.js"
 
 export default {
   name: "Home",
@@ -38,7 +44,8 @@ export default {
     return {
       questions: [],
       next: null,
-      loadingQuestions: false
+      loadingQuestions: false,
+      preview_length: 100
     }
   },
   methods: {

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { apiService } from "../common/api.service.js"
+import { apiService } from "@/common/api.service.js"
 
 // below is everything that will get exported to the 'App.vue' file 
 
@@ -45,17 +45,28 @@ export default {
     // component is open
 
     methods: {
+        // custom 'onSubmit' behaviour to override bootstrap form default
         onSubmit() {
+            // if question_body is empty
             if (!this.question_body) {
                 this.error = "You can't send an empty question!";
+            // if question_body is > 240 characters
             } else if (this.question_body.length > 240) {
                 this.error = "Ensure this field has no more than 240 characters";
             } else {
+                
                 let endpoint = "api/questions/";
                 let method = "POST";
 
+                // if question_body is valid, run apiService promise providing
+                // the endpoint url, POST method, and the question_body as content
+                // to be posted
                 apiService(endpoint, method, {content: this.question_body})
+                    // Use the response data from the apiService promise to...
                     .then(question_data => {
+                        // automatically push the user to a new url/vue router
+                        // page, with the url being the link to the question
+                        // just posted
                         this.$router.push({
                             name: 'question',
                             params: { slug: question_data.slug }
