@@ -32,8 +32,7 @@ class AnswerCreateAPIView(generics.CreateAPIView):
             raise ValidationError("You have already answered this Question!")
 
         serializer.save(author=self.request.user, question=question)
-
-
+        
 class AnswerListAPIView(generics.ListAPIView):
     serializer_class = AnswerSerializer
     permission_classes = [IsAuthenticated]
@@ -41,3 +40,10 @@ class AnswerListAPIView(generics.ListAPIView):
     def get_queryset(self):
         kwarg_slug = self.kwargs.get("slug")
         return Answer.objects.filter(question__slug=kwarg_slug).order_by("-created_at")
+
+class AnswerRUDAPIView(generics.RetrieveUpdateDestroyAPIView):
+    #Provide RUD functionality for an answer instance to its author
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
+    
