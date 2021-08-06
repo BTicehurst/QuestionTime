@@ -3,6 +3,10 @@
     <!-- div rendering the content, author and creation date of a question-->
     <div class="container">
       <h1>{{ question.content }}</h1>
+      <QuestionActions
+        v-if="isQuestionAuthor"
+        :slug="question.slug"
+      />
       <p class="mb-0">
         Posted By:
         <span class="author-name">{{ question.author }}</span>
@@ -82,6 +86,7 @@
 // import { defineComponent } from '@vue/composition-api'
 import { apiService } from "@/common/api.service.js";
 import AnswerComponent from "@/components/Answer.vue";
+import QuestionActions from "@/components/QuestionActions.vue";
 
 export default {
   name: "Question",
@@ -94,6 +99,7 @@ export default {
   },
   components: {
     AnswerComponent,
+    QuestionActions
   },
 
   data() {
@@ -109,7 +115,11 @@ export default {
       requestUser: null,
     };
   },
-
+  computed: {
+    isQuestionAuthor() {
+      return this.question.author === this.requestUser;
+    }
+  },
   methods: {
     setPageTitle(title) {
       document.title = title;

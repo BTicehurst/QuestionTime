@@ -29,6 +29,12 @@ import { apiService } from "@/common/api.service.js"
 
 export default {
     name: "QuestionEditor",
+    props: {
+        slug: {
+            type: String,
+            required: false
+        }
+    },
     
     // Data passes and initialises the models to be used within the component
     // to App.vue, so they can be used within the methods: and template
@@ -55,24 +61,44 @@ export default {
                 this.error = "Ensure this field has no more than 240 characters";
             } else {
                 
-                let endpoint = "api/questions/";
+                let endpoint = "/api/questions/";
                 let method = "POST";
+
+                if (this.slug !== undefined) {
+                    endpoint += `${ this.slug }/`;
+                    console.log('endpoint is', endpoint)
+                    method = "PUT";
+                }
 
                 // if question_body is valid, run apiService promise providing
                 // the endpoint url, POST method, and the question_body as content
                 // to be posted
+                
                 apiService(endpoint, method, {content: this.question_body})
                     // Use the response data from the apiService promise to...
                     .then(question_data => {
                         // automatically push the user to a new url/vue router
                         // page, with the url being the link to the question
                         // just posted
+                        console.log('testing');
+                        console.log(question_data.slug);
+                        console.log('testing');
                         this.$router.push({
                             name: 'question',
                             params: { slug: question_data.slug }
                         })
                     })
             }
+        }
+    },
+    async beforeRouteEnter (to, from, next) {
+        // ...
+        if (to.params.slug !== undefined) {
+            let endpoint = `/api/questions/${ to.params.slug }/`;
+            let data = await apiService(endpoint);
+            return next(vm => (vm.question_body = data.content))
+        } else {
+            return next();
         }
     },
     // logic to be run when the component is loaded/created

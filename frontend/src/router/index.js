@@ -18,9 +18,10 @@ const routes = [
     props: true
   },
   {
-    path: "/ask",
+    path: "/ask/:slug?",
     name: "question-editor",
     component: QuestionEditor,
+    props: true
   },
   {
     path: "/answer/:id",
