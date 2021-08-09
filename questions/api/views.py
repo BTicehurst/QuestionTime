@@ -14,6 +14,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
+    #override default 'create' function. 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -23,11 +24,13 @@ class AnswerCreateAPIView(generics.CreateAPIView):
     serializer_class = AnswerSerializer
     permission_classes = [IsAuthenticated]
 
+    #override default 'create' function. 
     def perform_create(self, serializer):
         request_user = self.request.user
         kwarg_slug = self.kwargs.get("slug")
         question = get_object_or_404(Question, slug=kwarg_slug)
 
+        #check if that that question's answers already has an entry by that user
         if question.answers.filter(author=request_user).exists():
             raise ValidationError("You have already answered this Question!")
 

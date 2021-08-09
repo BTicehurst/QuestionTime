@@ -66,7 +66,6 @@ export default {
 
                 if (this.slug !== undefined) {
                     endpoint += `${ this.slug }/`;
-                    console.log('endpoint is', endpoint)
                     method = "PUT";
                 }
 
@@ -80,9 +79,6 @@ export default {
                         // automatically push the user to a new url/vue router
                         // page, with the url being the link to the question
                         // just posted
-                        console.log('testing');
-                        console.log(question_data.slug);
-                        console.log('testing');
                         this.$router.push({
                             name: 'question',
                             params: { slug: question_data.slug }

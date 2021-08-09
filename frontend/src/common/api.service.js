@@ -2,9 +2,14 @@ import { CSRF_TOKEN } from "./csrf_token.js"
 
 //takes response just fetched and returns either '204 no content' or the json
 //of the response
-async function getJSON(response) {
-    if (response.status === 204) return '';
-    return response.json()
+function handleResponse(response) {
+    if (response.status === 204) {
+        return '';
+    } else if (response.status === 404) {
+        return null;
+    } else {
+        return response.json()
+    }
 }
 
 //this function attempts to fetch a response from the REST api backend
@@ -20,7 +25,7 @@ function apiService(endpoint, method, data) {
         }
     };
     return fetch(endpoint, config)          
-            .then(getJSON)
+            .then(handleResponse)
             .catch(error => console.log(error))
 }
 

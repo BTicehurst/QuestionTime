@@ -1,12 +1,9 @@
 <template>
   <div class="single-question mt-2">
     <!-- div rendering the content, author and creation date of a question-->
-    <div class="container">
+    <div v-if="question" class="container">
       <h1>{{ question.content }}</h1>
-      <QuestionActions
-        v-if="isQuestionAuthor"
-        :slug="question.slug"
-      />
+      <QuestionActions v-if="isQuestionAuthor" :slug="question.slug" />
       <p class="mb-0">
         Posted By:
         <span class="author-name">{{ question.author }}</span>
@@ -52,16 +49,18 @@
 
       <hr />
     </div>
-
-    <div class="container">
+    <div v-else>
+      <h1 class="error text-center">404 - Question Not Found</h1>
+    </div>
+    <div v-if="question" class="container">
       <!-- render an AnswerComponent component once for every answer
             in the 'answers' array, filled from 'getQuestionAnswers' which is
             run whenever the Question component is 'created()'-->
       <AnswerComponent
-        v-for="(answer, index) in answers"
+        v-for="answer in answers"
         :answer="answer"
         :requestUser="requestUser"
-        :key="index"
+        :key="answer.id"
         @delete-answer="deleteAnswer"
       />
       <div class="my-4">
@@ -99,7 +98,7 @@ export default {
   },
   components: {
     AnswerComponent,
-    QuestionActions
+    QuestionActions,
   },
 
   data() {
@@ -118,7 +117,7 @@ export default {
   computed: {
     isQuestionAuthor() {
       return this.question.author === this.requestUser;
-    }
+    },
   },
   methods: {
     setPageTitle(title) {
@@ -134,9 +133,14 @@ export default {
         // response data is used as parameter in arrow function to grab
         // question data
         .then((data) => {
-          this.question = data;
-          this.userHasAnswered = data.user_has_answered;
-          this.setPageTitle(data.content);
+          if (data) {
+            this.question = data;
+            this.userHasAnswered = data.user_has_answered;
+            this.setPageTitle(data.content);
+          } else {
+            this.question = null;
+            this.setPageTitle("404 - Page Not Found");
+          }
         });
     },
     getQuestionAnswers() {
@@ -182,7 +186,7 @@ export default {
       let endpoint = `/api/answers/${answer.id}/`;
       try {
         await apiService(endpoint, "DELETE");
-        this.answers.splice(this.answers.indexOf(answer), 1)
+        this.answers.splice(this.answers.indexOf(answer), 1);
         this.userHasAnswered = false;
       } catch (err) {
         console.log(err);
@@ -213,4 +217,5 @@ export default {
   font-weight: bold;
   color: red;
 }
+
 </style>
